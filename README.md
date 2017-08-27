@@ -36,14 +36,14 @@ Then configure the rules you want to use under the rules section.
 ```json
 {
     "rules": {
-        "feature-modules/rule-name": 2
+        "feature-modules/no-deep-module-require": {"moduleFolderName": "modules"}
     }
 }
 ```
 
 ## Supported Rules
 
-* Fill in provided rules here
+* no-deep-module-require - disallow importing other module files that are not exported through module's index.js file. See README of rule
 
 
 
