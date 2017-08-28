@@ -1,6 +1,6 @@
 const { RuleTester } = require('eslint');
 const rule = require('../../../../lib/rules/no-deep-module-require');
-const path = require('path')
+const path = require('path');
 
 const config = {
   parserOptions: {
@@ -10,15 +10,15 @@ const config = {
 };
 
 const normalizePath = filePath => {
-  return path.resolve(filePath)
-}
+  return path.resolve(filePath);
+};
 
 const ruleOptions = [{ moduleFolderName: 'module' }];
 
 const tester = new RuleTester(config);
 
 const invalid = testConfig => {
-  testConfig.errors = [{ message: 'Cannot request module thats too deep!' }];
+  testConfig.errors = [{ message: 'Importing of feature module components (outside of [feature]/index.js) is not allowed' }];
 
   return testConfig;
 };
