@@ -1,5 +1,6 @@
 const { RuleTester } = require('eslint');
 const rule = require('../../../../lib/rules/no-deep-module-require');
+const path = require('path')
 
 const config = {
   parserOptions: {
@@ -7,6 +8,10 @@ const config = {
     sourceType: 'module'
   }
 };
+
+const normalizePath = filePath => {
+  return path.resolve(filePath)
+}
 
 const ruleOptions = [{ moduleFolderName: 'module' }];
 
@@ -30,75 +35,80 @@ tester.run('no-deep-module-require', rule, {
   valid: [
     {
       code: 'import foo from "./module/story"',
-      filename: 'src/app',
+      filename: normalizePath('src/app'),
       options: ruleOptions
     },
     {
       code: 'import foo from "../../module/story"',
-      filename: 'module/party/index.js',
+      filename: normalizePath('module/party/index.js'),
       options: ruleOptions
     },
     {
       code: 'const foo = require("../../module/story")',
-      filename: 'module/party/index.js',
+      filename: normalizePath('module/party/index.js'),
       options: ruleOptions
     },
     {
-      code: 'const foo = require("../module/party/foo")',
-      filename: 'module/party/index.js',
+      code: 'const foo = require("../../module/party/foo")',
+      filename: normalizePath('module/party/index.js'),
       options: ruleOptions
     },
     {
       code: 'const foo = require("./reducer/test/test.js")',
-      filename: 'module/party/index.js',
+      filename: normalizePath('module/party/index.js'),
       options: ruleOptions
     },
     {
-      code: 'const foo = require("../feature/party")',
-      filename: 'feature/something/index.js',
+      code: 'const foo = require("../../feature/party")',
+      filename: normalizePath('feature/something/index.js'),
       options: [{ moduleFolderName: 'feature' }]
     },
     {
       code: 'const foo = require("module/this/is/long/but/fine")',
-      filename: 'module/something',
+      filename: normalizePath('module/something'),
       options: ruleOptions
     },
     {
       code: 'const foo = require("./module")',
-      filename: 'src',
+      filename: normalizePath('src'),
       options: ruleOptions
     },
     {
       code: 'const foo = require("./module/party/index.js")',
-      filename: 'src',
+      filename: normalizePath('src'),
       options: ruleOptions
     },
     {
       code: 'const foo = require("./module/party/index")',
-      filename: 'src',
+      filename: normalizePath('src'),
       options: ruleOptions
     }
   ],
   invalid: [
     invalid({
       code: 'const foo = require("../../module/story/foo")',
-      filename: 'module/party/index.js',
+      filename: normalizePath('module/party/index.js'),
       options: ruleOptions
     }),
     invalid({
       code: 'const reducer = require("./module/story/foo")',
-      filename: 'src/app',
+      filename: normalizePath('src/app'),
       options: ruleOptions
     }),
     invalid({
       code: 'const foo = require("../feature/party/reducer")',
-      filename: 'feature/something/index.js',
+      filename: normalizePath('feature/something/index.js'),
       options: [{ moduleFolderName: 'feature' }]
     }),
     invalid({
       code: 'const foo = require("../feature/party/inde")',
-      filename: 'feature/something/index.js',
+      filename: normalizePath('feature/something/index.js'),
       options: [{ moduleFolderName: 'feature' }]
+    }),
+    invalid({
+      code: 'const foo = require("../party/foo")',
+      filename: normalizePath('src/module/awesome/index.js'),
+      options: ruleOptions
     })
   ]
 });
